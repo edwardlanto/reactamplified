@@ -18,6 +18,7 @@ const initialState = {
 export default function CreatePost({
   updateOverlayVisibility, updatePosts, posts
 }) {
+  
   /* 1. Create local state with useState hook */
   const [formState, updateFormState] = useState(initialState)
 
