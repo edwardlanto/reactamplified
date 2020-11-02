@@ -24,6 +24,5 @@
       "dependsOn": [],
       "customAuth": false
     }
-  },
-  "hosting": {}
+  }
 }
