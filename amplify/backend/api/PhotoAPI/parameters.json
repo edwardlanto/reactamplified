@@ -1,5 +1,5 @@
 {
-    "AppSyncApiName": "reactamplifyAPI",
+    "AppSyncApiName": "PhotoAPI",
     "DynamoDBBillingMode": "PAY_PER_REQUEST",
     "DynamoDBEnableServerSideEncryption": false
 }

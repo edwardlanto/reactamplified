@@ -1,71 +1,47 @@
-/* src/App.js */
-import React, { useEffect, useState } from 'react'
-import Amplify, { API, graphqlOperation } from 'aws-amplify'
-import { createTodo } from './graphql/mutations'
-import { listTodos } from './graphql/queries'
-import { withAuthenticator,AmplifySignOut  } from '@aws-amplify/ui-react'
+import React, { useState, useEffect } from 'react';
+import Amplify, { API, Auth, Storage } from 'aws-amplify'
+import { v4 as uuid } from 'uuid'
+import { listPosts } from './graphql/queries'
+import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react'
 import awsExports from "./aws-exports";
 Amplify.configure(awsExports);
 
-const initialState = { name: '', description: '' }
+function App() {
+  const [posts, setPosts] = useState([])
 
-const App = () => {
-  const [formState, setFormState] = useState(initialState)
-  const [todos, setTodos] = useState([])
 
   useEffect(() => {
-    fetchTodos()
-  }, [])
+    fetchPosts();
+    checkUser();
+  }, []);
 
-  function setInput(key, value) {
-    setFormState({ ...formState, [key]: value })
+  async function checkUser() {
+    const user = await Auth.currentAuthenticatedUser();
+    console.log('user: ', user);
+    console.log('user attributes: ', user.attributes);
   }
 
-  async function fetchTodos() {
-    try {
-      const todoData = await API.graphql(graphqlOperation(listTodos))
-      const todos = todoData.data.listTodos.items
-      setTodos(todos)
-    } catch (err) { console.log('error fetching todos') }
-  }
 
-  async function addTodo() {
+  async function fetchPosts() {
     try {
-      if (!formState.name || !formState.description) return
-      const todo = { ...formState }
-      setTodos([...todos, todo])
-      setFormState(initialState)
-      await API.graphql(graphqlOperation(createTodo, {input: todo}))
+      const postData = await API.graphql({ query: listPosts });
+      setPosts(postData.data.listPosts.items)
     } catch (err) {
-      console.log('error creating todo:', err)
+      console.log({ err })
     }
   }
-
   return (
-    <div style={styles.container}>
-      <h2>Amplify Todos</h2>
-      <input
-        onChange={event => setInput('name', event.target.value)}
-        style={styles.input}
-        value={formState.name}
-        placeholder="Name"
-      />
-      <input
-        onChange={event => setInput('description', event.target.value)}
-        style={styles.input}
-        value={formState.description}
-        placeholder="Description"
-      />
-      <button style={styles.button} onClick={addTodo}>Create Todo</button>
-      <AmplifySignOut />
+    <div>
+      <h1>Hello World</h1>
       {
-        todos.map((todo, index) => (
-          <div key={todo.id ? todo.id : index} style={styles.todo}>
-            <p style={styles.todoName}>{todo.name}</p>
-            <p style={styles.todoDescription}>{todo.description}</p>
+        posts.map(post => (
+          <div key={post.id}>
+            <h3>{post.name}</h3>
+            <p>{post.location}</p>
           </div>
         ))
       }
+      <AmplifySignOut />
     </div>
   )
 }
@@ -79,4 +55,4 @@ const styles = {
   button: { backgroundColor: 'black', color: 'white', outline: 'none', fontSize: 18, padding: '12px 0px' }
 }
 
-export default withAuthenticator(App)
+export default withAuthenticator(App);
