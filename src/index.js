@@ -5,11 +5,15 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Amplify from "aws-amplify";
 import awsExports from "./aws-exports";
+
 Amplify.configure(awsExports);
+const federated = {
+  google_client_id: "33863868586-5s0jd1hefhj2a5c05nnffdqei72n8a39.apps.googleusercontent.com"
+};
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App federated={federated} />
   </React.StrictMode>,
   document.getElementById('root')
 );

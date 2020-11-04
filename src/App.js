@@ -15,7 +15,13 @@ import Header from './Header';
 import CreatePost from './CreatePost';
 import Button from './Button';
 
-function Router() {
+const MyTheme = {
+  googleSignInButton: { backgroundColor: "red", borderColor: "red" },
+  button: { backgroundColor: "green", borderColor: "red" },
+  signInButtonIcon: { display: "none" }
+};
+
+function App() {
   /* create a couple of pieces of initial state */
   const [showOverlay, updateOverlayVisibility] = useState(false);
   const [posts, updatePosts] = useState([]);
@@ -23,24 +29,25 @@ function Router() {
 
   /* fetch posts when component loads */
   useEffect(() => {
-      fetchPosts();
+    async function fetchPosts() {
+
+      /* query the API, ask for 100 items */
+      let postData = await API.graphql({ query: listPosts, variables: { limit: 100 }});
+      let postsArray = postData.data.listPosts.items;
+  
+      /* map over the image keys in the posts array, get signed image URLs for each image */
+      postsArray = await Promise.all(postsArray.map(async post => {
+        const imageKey = await Storage.get(post.image);
+        post.image = imageKey;
+        return post;
+      }));
+      
+      /* update the posts array in the local state */
+      setPostState(postsArray);
+    }
+    fetchPosts();
   }, []);
-  async function fetchPosts() {
-
-    /* query the API, ask for 100 items */
-    let postData = await API.graphql({ query: listPosts, variables: { limit: 100 }});
-    let postsArray = postData.data.listPosts.items;
-
-    /* map over the image keys in the posts array, get signed image URLs for each image */
-    postsArray = await Promise.all(postsArray.map(async post => {
-      const imageKey = await Storage.get(post.image);
-      post.image = imageKey;
-      return post;
-    }));
-    
-    /* update the posts array in the local state */
-    setPostState(postsArray);
-  }
+  
   async function setPostState(postsArray) {
     const user = await Auth.currentAuthenticatedUser();
     const myPostData = postsArray.filter(p => p.owner === user.username);
@@ -89,4 +96,11 @@ const contentStyle = css`
   padding: 0px 40px;
 `
 
-export default withAuthenticator(Router);
+export default withAuthenticator(App, false, [], null, MyTheme, {
+  signUpConfig: {
+    hiddenDefaults: ["phone_number"],
+    signUpFields: [
+      { label: "Name", key: "name", required: true, type: "string" }
+    ]
+  }
+});
