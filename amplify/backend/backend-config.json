@@ -17,14 +17,7 @@
       }
     }
   },
-  "auth": {
-    "reactamplifiedd86763b6": {
-      "service": "Cognito",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [],
-      "customAuth": false
-    }
-  },
+  "auth": {},
   "storage": {
     "images": {
       "service": "S3",

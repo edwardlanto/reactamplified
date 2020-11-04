@@ -13,10 +13,7 @@
     },
     "categories": {
       "auth": {
-        "reactamplifieda531b57d": {},
-        "reactamplifiedd86763b6": {
-          "hostedUIProviderCreds": "[{\"ProviderName\":\"Google\",\"client_id\":\"33863868586-5s0jd1hefhj2a5c05nnffdqei72n8a39.apps.googleusercontent.com\",\"client_secret\":\"PHPJSSnP-FjgxLar-8KX2XTD\"}]"
-        }
+        "reactamplifieda531b57d": {}
       }
     }
   }
