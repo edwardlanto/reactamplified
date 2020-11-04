@@ -13,7 +13,8 @@
     },
     "categories": {
       "auth": {
-        "reactamplified43750923": {}
+        "reactamplified43750923": {},
+        "userPoolGroups": {}
       }
     }
   }
